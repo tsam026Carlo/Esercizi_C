@@ -22,6 +22,8 @@ void inserimento(casa_t * elemento1 , casa_t * elemento2){
 	strcpy(elemento1->data_uscita,elemento2->data_uscita);
 }
 
+
+
 void pagamento(){
 	int vNumeroPersone=1, vGiorniTrascorsi;
 	char vModuloAbitativo, vModuloDiViaggio;
@@ -72,10 +74,10 @@ void ins_prenotazioni(){
 	printf("come ti chiami?\n");
 	scanf(" %100[0-9a-zA-Z ]" ,&nuovo.anagrafica[0]);
 	
-	printf("inizi che giorno?(gg/mm/aaaa)\n");
+	printf("inizi che giorno?(aaaa/mm/gg)\n");
 	scanf(" %s",&nuovo.data_entrata[0]);
 	
-	printf("finisci che giorno?(gg/mm/aaaa)\n");
+	printf("finisci che giorno?(aaaa/mm/gg)\n");
 	scanf(" %s",&nuovo.data_uscita[0]);
 	
 	printf("%s\n",nuovo.anagrafica);
@@ -111,9 +113,49 @@ void let_prenotazioni(){
 	}
 }
 
+void lettura_merge_data(){
+	casa_t copia_prenotazioni[15];
+	int g=0;
+	for(g=0; g<15; g++){
+		if(prenotazioni[g].anagrafica == NULL){
+			break;
+		}
+		allocaContratto(&copia_prenotazioni[g]);
+		inserimento(&copia_prenotazioni[g],&prenotazioni[g]);
+	}
+	int i;
+	for(i=0; i<15; i ++){
+		if(copia_prenotazioni[i].anagrafica == NULL){
+        		break;
+			}
+			int j;
+	        for(j=i; j<15; j++){
+	        	if(copia_prenotazioni[j].anagrafica == NULL){
+	        		break;
+				}
+	        	int compare = strcmp(copia_prenotazioni[i].data_uscita,copia_prenotazioni[j].data_uscita);
+				if(compare<0){
+					casa_t _tmp;
+					allocaContratto(&_tmp);
+	                inserimento(&_tmp, &copia_prenotazioni[i]);
+					inserimento(&copia_prenotazioni[i],&copia_prenotazioni[j]);
+					inserimento(&copia_prenotazioni[j] , &_tmp);
+	            }
+	        }
+    }
+    int z=0;
+	for(z=0; z<15; z++){
+		if(copia_prenotazioni[z].anagrafica == NULL){
+			break;
+		}
+		printf("[%d] = %s\t %s \t %s \n",z,copia_prenotazioni[z].anagrafica, copia_prenotazioni[z].data_entrata, copia_prenotazioni[z].data_uscita);
+	}
+    
+}
+
 void prenotazionii(){
 	int scelta=0;
-	printf("MENU'\n1:inserimento prenotazione\n2:lettura stack\n3:uscita\nSCELTA: ");
+	printf("MENU'\n1:inserimento prenotazione\n2:lettura stack\n3:lettura ordinata per data\nSCELTA: ");
 	scanf("%d", &scelta);
 	switch (scelta){
 		case 1:{
@@ -125,6 +167,7 @@ void prenotazionii(){
 			break;
 		}
 		case 3:{
+			lettura_merge_data();
 			break;
 		}
 		default:{
